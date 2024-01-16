@@ -9,7 +9,6 @@ public class Branch
     public int Id { get; set; }
     [Required]
     public string Name { get; set; }
-    [ForeignKey(nameof(ManagerId))]
     public int ManagerId { get; set; }
     public virtual Employee Manager { get; set; }
 

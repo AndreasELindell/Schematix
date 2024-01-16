@@ -10,8 +10,8 @@ namespace Schematix.Infrastructure.Context
         { }
 
 
-        DbSet<Employee> Employees { get; set;}
-        DbSet<Shift> Shifts { get; set;}
-        DbSet<Branch> Branches { get; set;}
+        public DbSet<Employee> Employees { get; set;}
+        public DbSet<Shift> Shifts { get; set;}
+        public DbSet<Branch> Branches { get; set;}
     }
 }
