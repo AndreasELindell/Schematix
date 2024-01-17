@@ -29,9 +29,9 @@ public class UserRepository : IUserRepository
         await _userManager.DeleteAsync(employee);
     }
 
-    public async Task<Employee?> GetEmployeeById(int employeeId)
+    public async Task<Employee?> GetEmployeeById(string employeeId)
     {
-        var user = await _userManager.FindByIdAsync(employeeId.ToString());
+        var user = await _userManager.FindByIdAsync(employeeId);
 
         if(user == null)
         {
@@ -71,11 +71,13 @@ public class UserRepository : IUserRepository
     }
 
     public async Task<bool> EmployeeExists(Employee employee) 
-    { 
-        if(await _userManager.FindByIdAsync(employee.Id) != null) 
+    {
+#pragma warning disable CS8604 // Possible null reference argument.
+        if (await _userManager.FindByEmailAsync(employee.Email) != null) 
         {
             return true;
         }
+#pragma warning restore CS8604 // Possible null reference argument.
         return false;
         
     }

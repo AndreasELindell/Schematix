@@ -13,7 +13,7 @@ namespace Schematix.Core.Entities
     {
         public string FirstName { get; set; }
         public string LastName { get; set; }
-        public int Salary {  get; set; }
+        public string Salary {  get; set; }
         public virtual ICollection<Shift> Shifts { get;}
     }
 }

@@ -41,6 +41,6 @@ app.UseAuthorization();
 
 app.MapControllers();
 
-app.MapIdentityApi<Employee>();
+app.MapMyIdentityApi<Employee>();
 
 app.Run();
