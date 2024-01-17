@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Azure;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Schematix.Core.DTOs;
 using Schematix.Core.Entities;
@@ -23,15 +25,15 @@ namespace Schematix.Api.Controllers
         public IEmployeeMapper Mapper { get; }
 
         [HttpGet]
-        public async Task<ActionResult<List<Employee>>> GetAllEmployees() 
+        public async Task<ActionResult<List<EmployeeDto>>> GetAllEmployees() 
         { 
             var employees = await _userRepository.GetEmployees();
 
-            return Ok(employees);
+            return Ok(_mapper.MapEmployees(employees));
         }
 
         [HttpGet("{employeeId}", Name = "GetEmployeeById")]
-        public async Task<ActionResult<Employee>> GetEmployeeById(string employeeId)
+        public async Task<ActionResult<EmployeeDto>> GetEmployeeById(string employeeId)
         {
             var employee = await _userRepository.GetEmployeeById(employeeId);
 
@@ -39,11 +41,11 @@ namespace Schematix.Api.Controllers
             { 
                 return NotFound();
             }
-            return Ok(employee);
+            return Ok(_mapper.MapEmployee(employee));
         }
 
         [HttpGet("Branch/{branchId}")]
-        public async Task<ActionResult<List<Employee>>> GetEmployeesFromBranch(int branchId) 
+        public async Task<ActionResult<List<EmployeeDto>>> GetEmployeesFromBranch(int branchId) 
         { 
             var employeesFromBranch = await _userRepository.GetEmployeesFromBranch(branchId);
             
@@ -52,7 +54,37 @@ namespace Schematix.Api.Controllers
                 return NotFound();
             }
 
-            return Ok(employeesFromBranch);
+            return Ok(_mapper.MapEmployees(employeesFromBranch));
+        }
+        [HttpPatch("{employeeId}")]
+        public async Task<ActionResult<EmployeeDto>> UpdateEmployee(string employeeId, JsonPatchDocument<EmployeeDto> document, string roleName)
+        {
+            if(document == null || employeeId == "0" || employeeId is null) 
+            { 
+                return BadRequest();
+            }
+
+            if(!await _userRepository.EmployeeExists(employeeId)) 
+            {
+                return NotFound();
+            }
+
+            var employeeDto = _mapper.MapEmployee(await _userRepository.GetEmployeeById(employeeId));
+
+            document.ApplyTo(employeeDto);
+
+            var employeeToUpdate = _mapper.MapEmployeeDto(employeeDto);
+
+            ReturnEmployeePatchChangesDto ReturnEmployeePatchChangesDto = new();
+
+            var changes = ReturnEmployeePatchChangesDto;
+
+            var respones = new
+            {
+
+            };
+
+            return Ok(new {Message = $"Employee{employeeToUpdate.FirstName} {employeeToUpdate.LastName} has been updated"});
         }
     }
 }

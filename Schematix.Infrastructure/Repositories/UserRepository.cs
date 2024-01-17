@@ -64,21 +64,14 @@ public class UserRepository : IUserRepository
     public async Task UpdateEmployee(Employee employee, string? roleName)
     {
         await _userManager.UpdateAsync(employee);
-        if (roleName != null) 
+        if(roleName != null) 
         { 
             await _userManager.AddToRoleAsync(employee, roleName);
         }
     }
 
-    public async Task<bool> EmployeeExists(Employee employee) 
+    public async Task<bool> EmployeeExists(string employeeId) 
     {
-#pragma warning disable CS8604 // Possible null reference argument.
-        if (await _userManager.FindByEmailAsync(employee.Email) != null) 
-        {
-            return true;
-        }
-#pragma warning restore CS8604 // Possible null reference argument.
-        return false;
-        
+        return await _dataContext.Employees.AsNoTracking().AnyAsync(e => e.Id == employeeId);
     }
 }

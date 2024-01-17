@@ -11,7 +11,7 @@ namespace Schematix.Core.Mappers;
 public interface IEmployeeMapper
 {
     IEnumerable<EmployeeDto> MapEmployees(IEnumerable<Employee> employees);
-    IEnumerable<Employee> MapEmployeeDto(IEnumerable<EmployeeDto> employeesDto);
+    IEnumerable<Employee> MapEmployeesDto(IEnumerable<EmployeeDto> employeesDto);
 
     Employee MapEmployeeDto(EmployeeDto dto);
     EmployeeDto MapEmployee(Employee employee);
@@ -35,14 +35,21 @@ public interface IEmployeeMapper
             };
         }
 
-        public IEnumerable<Employee> MapEmployeeDto(IEnumerable<EmployeeDto> employeesDto)
+        public IEnumerable<Employee> MapEmployeesDto(IEnumerable<EmployeeDto> employeesDto)
         {
-            throw new NotImplementedException();
+            return employeesDto.Select(MapEmployeeDto);
         }
 
         public Employee MapEmployeeDto(EmployeeDto dto)
         {
-            throw new NotImplementedException();
+            return new Employee
+            {
+                Id = dto.Id,
+                UserName = dto.UserName,
+                Salary = dto.Salary,
+                Email = dto.Email,
+                PhoneNumber = dto.PhoneNumber,
+            };
         }
     }
 }

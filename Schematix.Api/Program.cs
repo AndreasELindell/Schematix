@@ -2,8 +2,10 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Schematix.Core.Entities;
 using Schematix.Core.Interfaces;
+using Schematix.Core.Mappers;
 using Schematix.Infrastructure.Context;
 using Schematix.Infrastructure.Repositories;
+using static Schematix.Core.Mappers.IEmployeeMapper;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,6 +17,8 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IEmployeeMapper, EmployeeMapper>();
+
 
 builder.Services.AddDbContext<DataContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("Default")));
 
