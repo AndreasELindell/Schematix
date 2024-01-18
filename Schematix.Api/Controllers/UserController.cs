@@ -57,7 +57,7 @@ namespace Schematix.Api.Controllers
             return Ok(_mapper.MapEmployees(employeesFromBranch));
         }
         [HttpPatch("{employeeId}")]
-        public async Task<ActionResult<EmployeeDto>> UpdateEmployee(string employeeId, JsonPatchDocument<EmployeeDto> document, string roleName)
+        public async Task<ActionResult<EmployeeDto>> UpdateEmployee(string employeeId, JsonPatchDocument<Employee> document, string? roleName)
         {
             if(document == null || employeeId == "0" || employeeId is null) 
             { 
@@ -69,22 +69,27 @@ namespace Schematix.Api.Controllers
                 return NotFound();
             }
 
-            var employeeDto = _mapper.MapEmployee(await _userRepository.GetEmployeeById(employeeId));
+            var employee = await _userRepository.GetEmployeeById(employeeId);
 
-            document.ApplyTo(employeeDto);
-
-            var employeeToUpdate = _mapper.MapEmployeeDto(employeeDto);
-
-            ReturnEmployeePatchChangesDto ReturnEmployeePatchChangesDto = new();
-
-            var changes = ReturnEmployeePatchChangesDto;
-
-            var respones = new
+            var originalEmployee = new Employee
             {
-
+                Id = employee.Id,
+                Email = employee.Email,
+                PhoneNumber = employee.PhoneNumber,
+                UserName = employee.UserName,
+                Salary = employee.Salary
             };
 
-            return Ok(new {Message = $"Employee{employeeToUpdate.FirstName} {employeeToUpdate.LastName} has been updated"});
+            document.ApplyTo(employee);
+
+            await _userRepository.UpdateEmployee(employee, roleName);
+
+            var response = new
+            {
+                Changes = ReturnEmployeePatchChangesDto.GetChanges(originalEmployee, employee)
+            };
+
+            return Ok(response);
         }
     }
 }

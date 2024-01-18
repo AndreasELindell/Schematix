@@ -11,7 +11,10 @@ public interface IBranchRepository
 {
     Task<IEnumerable<Branch>> GetAllBranches();
     Task<Branch> GetBranchById(int branchId);
+    Task AddEmployeeToBranch(Employee employee, int branchId);
+    Task RemoveEmployeeFromBranch(Employee employee, int branchId);
     Task AddBranch(Branch branch);
-    Task DeleteBranch(int branchId);
+    Task DeleteBranch(Branch branch);
+    Task UpdateBranch(Branch branch);
     Task<bool> BranchExist(int branchId);
 }
