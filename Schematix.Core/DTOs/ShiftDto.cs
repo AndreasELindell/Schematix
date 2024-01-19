@@ -9,7 +9,7 @@ namespace Schematix.Core.DTOs
         public TimeOnly End { get; set; }
         public TimeSpan Length { get; set; }
         public DateOnly Date { get; set; }
-        public Branch Branch { get; set; }
-        public Employee Employee { get; set; }
+        public BranchDto Branch { get; set; }
+        public EmployeeDto Employee { get; set; }
     }
 }

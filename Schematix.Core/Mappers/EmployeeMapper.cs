@@ -10,41 +10,40 @@ public interface IEmployeeMapper
 
     Employee MapEmployeeDto(EmployeeDto dto);
     EmployeeDto MapEmployee(Employee employee);
-
-    public class EmployeeMapper : IEmployeeMapper
+}
+public class EmployeeMapper : IEmployeeMapper
+{
+    public IEnumerable<EmployeeDto> MapEmployees(IEnumerable<Employee> employees)
     {
-        public IEnumerable<EmployeeDto> MapEmployees(IEnumerable<Employee> employees)
-        {
-            return employees.Select(MapEmployee);
-        }
+        return employees.Select(MapEmployee);
+    }
 
-        public EmployeeDto MapEmployee(Employee employee)
+    public EmployeeDto MapEmployee(Employee employee)
+    {
+        return new EmployeeDto
         {
-            return new EmployeeDto
-            {
-                Id = employee.Id,
-                UserName = employee.UserName!,
-                Salary = employee.Salary,
-                Email = employee.Email!,
-                PhoneNumber = employee.PhoneNumber!
-            };
-        }
+            Id = employee.Id,
+            UserName = employee.UserName!,
+            Salary = employee.Salary,
+            Email = employee.Email!,
+            PhoneNumber = employee.PhoneNumber!
+        };
+    }
 
-        public IEnumerable<Employee> MapEmployeesDto(IEnumerable<EmployeeDto> employeesDto)
-        {
-            return employeesDto.Select(MapEmployeeDto);
-        }
+    public IEnumerable<Employee> MapEmployeesDto(IEnumerable<EmployeeDto> employeesDto)
+    {
+        return employeesDto.Select(MapEmployeeDto);
+    }
 
-        public Employee MapEmployeeDto(EmployeeDto dto)
+    public Employee MapEmployeeDto(EmployeeDto dto)
+    {
+        return new Employee
         {
-            return new Employee
-            {
-                Id = dto.Id,
-                UserName = dto.UserName,
-                Salary = dto.Salary,
-                Email = dto.Email,
-                PhoneNumber = dto.PhoneNumber,
-            };
-        }
+            Id = dto.Id,
+            UserName = dto.UserName,
+            Salary = dto.Salary,
+            Email = dto.Email,
+            PhoneNumber = dto.PhoneNumber,
+        };
     }
 }

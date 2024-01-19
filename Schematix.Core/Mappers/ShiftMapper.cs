@@ -13,6 +13,14 @@ public interface IShiftMapper
 }
 public class ShiftMapper : IShiftMapper
 {
+    private readonly IBranchMapper _branchMapper;
+    private readonly IEmployeeMapper _employeeMapper;
+
+    public ShiftMapper(IBranchMapper branchMapper, IEmployeeMapper employeeMapper)
+    {
+        _branchMapper = branchMapper;
+        _employeeMapper = employeeMapper;
+    }
     public ShiftDto MapShift(Shift shift)
     {
         return new ShiftDto
@@ -22,8 +30,8 @@ public class ShiftMapper : IShiftMapper
             End = shift.End,
             Length = shift.Length,
             Date = shift.Date,
-            Branch = shift.Branch,
-            Employee = shift.Employee
+            Branch = _branchMapper.MapBranch(shift.Branch),
+            Employee = _employeeMapper.MapEmployee(shift.Employee)
         };
     }
 
@@ -39,6 +47,8 @@ public class ShiftMapper : IShiftMapper
 
     public Shift MapShiftDto(ShiftDto shiftDto)
     {
+
+
         return new Shift
         {
             Id = shiftDto.Id,
@@ -46,8 +56,8 @@ public class ShiftMapper : IShiftMapper
             End = shiftDto.End,
             Length = shiftDto.Length,
             Date = shiftDto.Date,
-            Branch = shiftDto.Branch,
-            Employee = shiftDto.Employee
+            Branch = _branchMapper.MapBranchDto(shiftDto.Branch),
+            Employee = _employeeMapper.MapEmployeeDto(shiftDto.Employee)
         };
     }
 }

@@ -10,32 +10,32 @@ namespace Schematix.Infrastructure.Repositories;
 public class ShiftRepository : IShiftRepository
 {
     private readonly DataContext _dataContext;
-    private readonly IUserRepository _userRepository;
-    private readonly IBranchRepository _branchRepository;
 
     public ShiftRepository(DataContext dataContext)
     {
         _dataContext = dataContext;
     }
 
-    public Task AddShift(Shift shift)
+    public async Task AddShift(Shift shift)
     {
-        throw new NotImplementedException();
+        _dataContext.Shifts.Add(shift);
+        await _dataContext.SaveChangesAsync();
     }
 
-    public Task DeleteShift(int shiftId)
+    public async Task DeleteShift(Shift shift)
     {
-        throw new NotImplementedException();
+        _dataContext.Shifts.Remove(shift);
+        await _dataContext.SaveChangesAsync();
     }
 
-    public Task<bool> DoShiftExist(int shiftId)
+    public async Task<bool> DoShiftExist(int shiftId)
     {
-        throw new NotImplementedException();
+        return await _dataContext.Shifts.AnyAsync(s => s.Id == shiftId);
     }
 
-    public Task<Shift> GetShift(Shift shift)
+    public async Task<Shift> GetShift(Shift shift)
     {
-        throw new NotImplementedException();
+        return (await _dataContext.Shifts.FindAsync(shift))!;
     }
 
     public async Task<IEnumerable<Shift>> GetShiftsForBranch(int branchId)
@@ -48,8 +48,9 @@ public class ShiftRepository : IShiftRepository
         return await _dataContext.Shifts.Where(s => s.EmployeeId == employeeId).ToListAsync();
     }
 
-    public Task UpdateShift(Shift shift)
+    public async Task UpdateShift(Shift shift)
     {
-        throw new NotImplementedException();
+        _dataContext.Shifts.Update(shift);
+        await _dataContext.SaveChangesAsync();
     }
 }

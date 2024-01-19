@@ -8,7 +8,7 @@ public interface IShiftRepository
     Task<IEnumerable<Shift>> GetShiftsForBranch(int branchId);
     Task<Shift> GetShift(Shift shift);
     Task AddShift(Shift shift);
-    Task DeleteShift(int shiftId);
+    Task DeleteShift(Shift shift);
     Task UpdateShift(Shift shift);
     Task<bool> DoShiftExist(int shiftId);
 }
