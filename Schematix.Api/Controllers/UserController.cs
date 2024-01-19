@@ -1,6 +1,4 @@
-﻿using Azure;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.JsonPatch;
+﻿using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Schematix.Core.DTOs;
 using Schematix.Core.Entities;
@@ -25,8 +23,8 @@ namespace Schematix.Api.Controllers
         public IEmployeeMapper Mapper { get; }
 
         [HttpGet]
-        public async Task<ActionResult<List<EmployeeDto>>> GetAllEmployees() 
-        { 
+        public async Task<ActionResult<List<EmployeeDto>>> GetAllEmployees()
+        {
             var employees = await _userRepository.GetEmployees();
 
             return Ok(_mapper.MapEmployees(employees));
@@ -37,19 +35,19 @@ namespace Schematix.Api.Controllers
         {
             var employee = await _userRepository.GetEmployeeById(employeeId);
 
-            if(employee == null) 
-            { 
+            if (employee == null)
+            {
                 return NotFound();
             }
             return Ok(_mapper.MapEmployee(employee));
         }
 
         [HttpGet("Branch/{branchId}")]
-        public async Task<ActionResult<List<EmployeeDto>>> GetEmployeesFromBranch(int branchId) 
-        { 
+        public async Task<ActionResult<List<EmployeeDto>>> GetEmployeesFromBranch(int branchId)
+        {
             var employeesFromBranch = await _userRepository.GetEmployeesFromBranch(branchId);
-            
-            if(employeesFromBranch == null) 
+
+            if (employeesFromBranch == null)
             {
                 return NotFound();
             }
@@ -59,12 +57,12 @@ namespace Schematix.Api.Controllers
         [HttpPatch("{employeeId}")]
         public async Task<ActionResult<EmployeeDto>> UpdateEmployee(string employeeId, JsonPatchDocument<Employee> document, string? roleName)
         {
-            if(document == null || employeeId == "0" || employeeId is null) 
-            { 
+            if (document == null || employeeId == "0" || employeeId is null)
+            {
                 return BadRequest();
             }
 
-            if(!await _userRepository.EmployeeExists(employeeId)) 
+            if (!await _userRepository.EmployeeExists(employeeId))
             {
                 return NotFound();
             }

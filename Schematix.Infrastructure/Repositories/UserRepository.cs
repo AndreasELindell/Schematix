@@ -1,8 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 using Schematix.Core.Entities;
-using Schematix.Core.Enums;
 using Schematix.Core.Interfaces;
 using Schematix.Infrastructure.Context;
 
@@ -12,16 +10,13 @@ public class UserRepository : IUserRepository
 {
     private readonly DataContext _dataContext;
     private readonly UserManager<Employee> _userManager;
-    private readonly RoleManager<IdentityRole> _roleManager;
     public UserRepository(
-        DataContext dataContext,  
-        UserManager<Employee> userManager,
-        RoleManager<IdentityRole> roleManager
+        DataContext dataContext,
+        UserManager<Employee> userManager
         )
     {
         _dataContext = dataContext;
         _userManager = userManager;
-        _roleManager = roleManager;
     }
 
     public async Task DeleteEmployeeById(Employee employee)
@@ -33,7 +28,7 @@ public class UserRepository : IUserRepository
     {
         var user = await _userManager.FindByIdAsync(employeeId);
 
-        if(user == null)
+        if (user == null)
         {
             return null;
         }
@@ -54,8 +49,8 @@ public class UserRepository : IUserRepository
     {
         var branch = await _dataContext.Branches.Include(b => b.Employees).FirstOrDefaultAsync(b => b.Id == branchId);
 
-        if(branch is null || branch.Employees is null) 
-        { 
+        if (branch is null || branch.Employees is null)
+        {
             return Enumerable.Empty<Employee>();
         }
         return branch.Employees;
@@ -64,13 +59,13 @@ public class UserRepository : IUserRepository
     public async Task UpdateEmployee(Employee employee, string? roleName)
     {
         await _userManager.UpdateAsync(employee);
-        if(roleName != null) 
-        { 
+        if (roleName != null)
+        {
             await _userManager.AddToRoleAsync(employee, roleName);
         }
     }
 
-    public async Task<bool> EmployeeExists(string employeeId) 
+    public async Task<bool> EmployeeExists(string employeeId)
     {
         return await _dataContext.Employees.AsNoTracking().AnyAsync(e => e.Id == employeeId);
     }

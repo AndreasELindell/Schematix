@@ -1,12 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Schematix.Core.Entities;
 
-namespace Schematix.Core.Interfaces
+namespace Schematix.Core.Interfaces;
+
+public interface IShiftRepository
 {
-    public interface IShiftRepository
-    {
-    }
+    Task<IEnumerable<Shift>> GetShiftsForEmployee(string employeeId);
+    Task<IEnumerable<Shift>> GetShiftsForBranch(int branchId);
+    Task<Shift> GetShift(Shift shift);
+    Task AddShift(Shift shift);
+    Task DeleteShift(int shiftId);
+    Task UpdateShift(Shift shift);
+    Task<bool> DoShiftExist(int shiftId);
 }

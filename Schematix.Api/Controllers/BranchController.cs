@@ -13,7 +13,7 @@ public class BranchController : ControllerBase
     private readonly IBranchMapper _mapper;
     private readonly IUserRepository _userRepository;
 
-    public BranchController(IBranchRepository branchRepository,IBranchMapper mapper, IUserRepository userRepository)
+    public BranchController(IBranchRepository branchRepository, IBranchMapper mapper, IUserRepository userRepository)
     {
         _branchRepository = branchRepository;
         _mapper = mapper;
@@ -29,12 +29,12 @@ public class BranchController : ControllerBase
     }
     [HttpGet]
     [Route("{branchId}", Name = "GetBranchById")]
-    public async Task<ActionResult<BranchDto>> GetBranchById(int branchId) 
-    { 
-        var branch = await _branchRepository.GetBranchById(branchId);
+    public async Task<ActionResult<BranchDto>> GetBranchById(int branchId)
+    {
+        var branch = await _branchRepository.GetBranchByIdWithEmployees(branchId);
 
-        if(branch == null) 
-        { 
+        if (branch == null)
+        {
             return NotFound();
         }
 
@@ -44,8 +44,8 @@ public class BranchController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<ActionResult> AddBranch(BranchDto branchDto) 
-    { 
+    public async Task<ActionResult> AddBranch(BranchDto branchDto)
+    {
         var branch = _mapper.MapBranchDto(branchDto);
 
         await _branchRepository.AddBranch(branch);
@@ -55,24 +55,24 @@ public class BranchController : ControllerBase
     [HttpPost("{branchId}/{employeeId}")]
     public async Task<ActionResult> AddEmployeeToBranch(string employeeId, int branchId)
     {
-        if(!await _branchRepository.BranchExist(branchId)) 
+        if (!await _branchRepository.BranchExist(branchId))
         {
             return NotFound(new { Message = "Branch Not Found" });
         }
 
-        if(!await _userRepository.EmployeeExists(employeeId)) 
+        if (!await _userRepository.EmployeeExists(employeeId))
         {
-            return NotFound( new {Message = "Employee Not Found"});
+            return NotFound(new { Message = "Employee Not Found" });
         }
 
         var employee = await _userRepository.GetEmployeeById(employeeId);
 
         await _branchRepository.AddEmployeeToBranch(employee, branchId);
 
-        return Ok( new {Message = $"Employee {employeeId} was added to Branch {branchId}"});
+        return Ok(new { Message = $"Employee {employeeId} was added to Branch {branchId}" });
     }
     [HttpDelete]
-    public async Task<ActionResult> RemoveEmployeeFromBranch(string employeeId, int branchId) 
+    public async Task<ActionResult> RemoveEmployeeFromBranch(string employeeId, int branchId)
     {
         if (!await _branchRepository.BranchExist(branchId))
         {

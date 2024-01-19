@@ -1,5 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 using Schematix.Core.Entities;
 using Schematix.Core.Interfaces;
 using Schematix.Infrastructure.Context;
@@ -24,9 +23,9 @@ public class BranchRepository : IBranchRepository
 
     public async Task AddEmployeeToBranch(Employee employee, int branchId)
     {
-        var branch = await GetBranchById(branchId);
-        if(branch.Employees == null) 
-        { 
+        var branch = await GetBranchByIdWithEmployees(branchId);
+        if (branch.Employees == null)
+        {
             branch.Employees = new List<Employee>();
         }
 
@@ -52,21 +51,25 @@ public class BranchRepository : IBranchRepository
             .ToListAsync();
     }
 
-    public async Task<Branch?> GetBranchById(int branchId)
+    public async Task<Branch?> GetBranchByIdWithEmployees(int branchId)
+    {
+        return await _dataContext.Branches.Include(b => b.Employees).FirstOrDefaultAsync(b => b.Id == branchId);
+    }
+    public async Task<Branch?> GetBranchByIdWithoutEmployees(int branchId)
     {
         return await _dataContext.Branches.FirstOrDefaultAsync(b => b.Id == branchId);
     }
 
     public async Task RemoveEmployeeFromBranch(Employee employee, int branchId)
     {
-        var branch = await GetBranchById(branchId);
+        var branch = await GetBranchByIdWithEmployees(branchId);
         branch!.Employees.Remove(employee);
         await _dataContext.SaveChangesAsync();
     }
 
     public async Task UpdateBranch(Branch branch)
     {
-         _dataContext.Branches.Update(branch);
+        _dataContext.Branches.Update(branch);
         await _dataContext.SaveChangesAsync();
     }
 }
