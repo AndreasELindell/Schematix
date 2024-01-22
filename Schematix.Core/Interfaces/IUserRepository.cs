@@ -1,4 +1,5 @@
-﻿using Schematix.Core.Entities;
+﻿using Microsoft.AspNetCore.Identity;
+using Schematix.Core.Entities;
 
 namespace Schematix.Core.Interfaces;
 
@@ -10,4 +11,5 @@ public interface IUserRepository
     Task UpdateEmployee(Employee employee, string? roleName);
     Task DeleteEmployeeById(Employee employee);
     Task<bool> EmployeeExists(string employeeId);
+    Task<IEnumerable<IdentityRole>> GetRoles();
 }

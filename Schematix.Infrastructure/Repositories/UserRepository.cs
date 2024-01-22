@@ -10,13 +10,17 @@ public class UserRepository : IUserRepository
 {
     private readonly DataContext _dataContext;
     private readonly UserManager<Employee> _userManager;
+    private readonly RoleManager<IdentityRole> _roleManager;
     public UserRepository(
         DataContext dataContext,
-        UserManager<Employee> userManager
+        UserManager<Employee> userManager,
+        RoleManager<IdentityRole> roleManager
+
         )
     {
         _dataContext = dataContext;
         _userManager = userManager;
+        _roleManager = roleManager;
     }
 
     public async Task DeleteEmployeeById(Employee employee)
@@ -34,7 +38,12 @@ public class UserRepository : IUserRepository
         }
         return user;
     }
+    public async Task<IEnumerable<IdentityRole>> GetRoles() 
+    {
+        var roles = await _roleManager.Roles.ToListAsync();
 
+        return roles;
+    }
     public async Task<IEnumerable<Employee>> GetEmployees()
     {
         var users = await _userManager.Users.ToListAsync();
