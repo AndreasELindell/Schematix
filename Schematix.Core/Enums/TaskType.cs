@@ -6,11 +6,9 @@ using System.Threading.Tasks;
 
 namespace Schematix.Core.Enums
 {
-    public enum Roles
+    public enum TaskType
     {
-        Salesperson = 1,
-        Manager = 2,
-        CEO = 3,
-        Admin = 4,
+        Work,
+        Break
     }
 }

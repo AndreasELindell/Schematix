@@ -25,10 +25,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Middleware\ExceptionsMiddleware\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\Schematix.Core\Schematix.Core.csproj" />
     <ProjectReference Include="..\Schematix.Infrastructure\Schematix.Infrastructure.csproj" />
   </ItemGroup>

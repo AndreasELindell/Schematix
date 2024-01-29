@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Schematix.Core.Enums;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Schematix.Core.Entities
@@ -21,6 +22,8 @@ namespace Schematix.Core.Entities
         [ForeignKey(nameof(EmployeeId))]
         public string EmployeeId { get; set; }
         public virtual Employee Employee { get; set; }
+        public ShiftType Type { get; set; }
+        public virtual ICollection<WorkTask> Tasks { get; set; }
 
 
     }
