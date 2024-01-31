@@ -29,7 +29,7 @@ namespace Schematix.Api.Controllers
 
             return Ok(_mapper.MapEmployees(employees));
         }
-        [HttpGet("/roles")]
+        [HttpGet("roles")]
         public async Task<ActionResult> GetAllRoles() 
         { 
             var roles = await _userRepository.GetRoles();
