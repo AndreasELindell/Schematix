@@ -47,6 +47,7 @@ public class BranchRepository : IBranchRepository
     public async Task<IEnumerable<Branch>> GetAllBranches()
     {
         return await _dataContext.Branches
+            .Include(b => b.Manager)
             .Include(b => b.Employees)
             .ToListAsync();
     }

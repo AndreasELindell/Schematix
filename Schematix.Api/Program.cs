@@ -32,6 +32,8 @@ builder.Services.AddScoped<IBranchMapper, BranchMapper>();
 builder.Services.AddScoped<IShiftRepository, ShiftRepository>();
 builder.Services.AddScoped<IShiftMapper, ShiftMapper>();
 
+builder.Services.AddScoped<IWorkTaskMapper, WorkTaskMapper>();
+
 builder.Services.AddDbContext<DataContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("Default")));
 
 builder.Services.AddAuthorization();
@@ -55,7 +57,7 @@ app.UseHttpsRedirection();
 
 app.UseAuthorization();
 
-app.UseCors();
+app.UseCors("corspolicy");
 
 app.MapControllers();
 

@@ -29,16 +29,24 @@ public class BranchMapper : IBranchMapper
     {
         var employees = Enumerable.Empty<EmployeeDto>();
 
+        var manager = new EmployeeDto();
+
         if (branch.Employees != null) 
         {
             employees = _mapper.MapEmployees(branch.Employees);
         }
          
+        if(branch.Manager != null) 
+        {
+            manager = _mapper.MapEmployee(branch.Manager);
+        }
+
         return new BranchDto
         {
             Id = branch.Id,
             Name = branch.Name,
             ManagerId = branch.ManagerId,
+            Manager = manager,
             Employees = employees
         };
     }
@@ -53,6 +61,7 @@ public class BranchMapper : IBranchMapper
             Id = dto.Id,
             Name = dto.Name,
             ManagerId = dto.ManagerId,
+            Manager = manager,
             Employees = employees as ICollection<Employee>
         };
     }
