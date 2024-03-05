@@ -1,5 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.JsonPatch;
+using Microsoft.AspNetCore.Mvc;
 using Schematix.Core.DTOs;
+using Schematix.Core.Entities;
 using Schematix.Core.Interfaces;
 using Schematix.Core.Mappers;
 
@@ -52,26 +54,27 @@ public class BranchController : ControllerBase
 
         return CreatedAtRoute("GetBranchById", new { id = branch.Id }, branch);
     }
-    [HttpPost("{branchId}/{employeeId}")]
-    public async Task<ActionResult> AddEmployeeToBranch(string employeeId, int branchId)
+    [HttpPost("{branchId}")]
+    public async Task<ActionResult> AddEmployeeToBranch(List<string> employeeIds, int branchId)
     {
         if (!await _branchRepository.BranchExist(branchId))
         {
             return NotFound(new { Message = "Branch Not Found" });
         }
-
-        if (!await _userRepository.EmployeeExists(employeeId))
+        foreach (var employeeid  in employeeIds) 
         {
-            return NotFound(new { Message = "Employee Not Found" });
+            if (!await _userRepository.EmployeeExists(employeeid))
+            {
+                return NotFound(new { Message = "Employee Not Found" });
+            }
+            var employee = await _userRepository.GetEmployeeById(employeeid);
+
+            await _branchRepository.AddEmployeeToBranch(employee, branchId);
         }
 
-        var employee = await _userRepository.GetEmployeeById(employeeId);
-
-        await _branchRepository.AddEmployeeToBranch(employee, branchId);
-
-        return Ok(new { Message = $"Employee {employeeId} was added to Branch {branchId}" });
+        return Ok(new { Message = $"Employees were added to Branch {branchId}" });
     }
-    [HttpDelete]
+    [HttpDelete("{branchId}/{employeeId}")]
     public async Task<ActionResult> RemoveEmployeeFromBranch(string employeeId, int branchId)
     {
         if (!await _branchRepository.BranchExist(branchId))
@@ -89,5 +92,21 @@ public class BranchController : ControllerBase
         await _branchRepository.RemoveEmployeeFromBranch(employee, branchId);
 
         return Ok(new { Message = $"Employee {employeeId} was removed from Branch {branchId}" });
+    }
+    [HttpPatch("{branchId}")]
+    public async Task<ActionResult> UpdateBranch(int branchId, JsonPatchDocument<Branch> document) 
+    { 
+        if (!await _branchRepository.BranchExist(branchId)) 
+        {
+            return NotFound(new { Message = "Branch Not Found" });
+        }
+
+        var branch = await _branchRepository.GetBranchByIdWithoutEmployees(branchId);
+
+        document.ApplyTo(branch);
+
+        await _branchRepository.UpdateBranch(branch);
+
+        return Ok(new { Message = $"{branch.Name} manager was updated"});
     }
 }

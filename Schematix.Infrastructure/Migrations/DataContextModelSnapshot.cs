@@ -231,6 +231,10 @@ namespace Schematix.Infrastructure.Migrations
                     b.Property<bool>("PhoneNumberConfirmed")
                         .HasColumnType("bit");
 
+                    b.Property<string>("Roles")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Salary")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");

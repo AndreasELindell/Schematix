@@ -1,9 +1,11 @@
-﻿using Microsoft.AspNetCore.JsonPatch;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Schematix.Core.DTOs;
 using Schematix.Core.Entities;
 using Schematix.Core.Interfaces;
 using Schematix.Core.Mappers;
+using Schematix.Core.Services;
 
 namespace Schematix.Api.Controllers
 {
@@ -13,11 +15,16 @@ namespace Schematix.Api.Controllers
     {
         private readonly IUserRepository _userRepository;
         private readonly IEmployeeMapper _mapper;
+        private readonly EmployeeRoleService _roleService;
 
-        public UserController(IUserRepository userRepository, IEmployeeMapper mapper)
+        public UserController(
+            IUserRepository userRepository, 
+            IEmployeeMapper mapper, 
+            EmployeeRoleService roleService)
         {
             _userRepository = userRepository;
             _mapper = mapper;
+            _roleService = roleService;
         }
 
         public IEmployeeMapper Mapper { get; }
@@ -27,12 +34,18 @@ namespace Schematix.Api.Controllers
         {
             var employees = await _userRepository.GetEmployees();
 
-            return Ok(_mapper.MapEmployees(employees));
+            //var employeeDto = _mapper.MapEmployees(employees);
+            var employeesWithRole =  await _roleService.MapRolesToEmployees(employees);
+
+            return Ok(employeesWithRole);
         }
         [HttpGet("roles")]
         public async Task<ActionResult> GetAllRoles() 
         { 
-            var roles = await _userRepository.GetRoles();
+            var identityroles = await _userRepository.GetRoles();
+
+            var roles = identityroles.Select(x => x.Name);
+
 
             return Ok(roles);
         }
@@ -76,7 +89,7 @@ namespace Schematix.Api.Controllers
 
             var employee = await _userRepository.GetEmployeeById(employeeId);
 
-            var originalEmployee = new Employee
+            var originalEmployeeToReturn = new Employee
             {
                 Id = employee.Id,
                 Email = employee.Email,
@@ -91,7 +104,7 @@ namespace Schematix.Api.Controllers
 
             var response = new
             {
-                Changes = ReturnEmployeePatchChangesDto.GetChanges(originalEmployee, employee)
+                Changes = ReturnEmployeePatchChangesDto.GetChanges(originalEmployeeToReturn, employee)
             };
 
             return Ok(response);
