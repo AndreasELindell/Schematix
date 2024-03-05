@@ -18,10 +18,10 @@ public class EmployeeRoleService
         _mapper = mapper;
     }
 
-    public async Task<List<EmployeeDto>?> MapRolesToEmployees(IEnumerable<Employee> employees) 
-    { 
-        
-        if(employees == null) 
+    public async Task<List<EmployeeDto>?> MapRolesToEmployees(IEnumerable<Employee> employees)
+    {
+
+        if (employees == null)
         {
             return null;
         }
@@ -39,8 +39,40 @@ public class EmployeeRoleService
 
             employeeDTOs.Add(employeeDto);
         }
-        
+
         return employeeDTOs;
 
+    }
+    public async Task<List<EmployeeDto>?> MapRolesToBranchEmployees(IEnumerable<EmployeeDto> employees)
+    {
+
+        if (employees == null)
+        {
+            return null;
+        }
+
+        var employeeDTOs = new List<EmployeeDto>();
+
+        foreach (var employee in employees)
+        {
+
+            var e = await _userRepository.GetEmployeeById(employee.Id);
+            var roles = await _userManager.GetRolesAsync(e);
+
+            employee.Roles = roles;
+
+            employeeDTOs.Add(employee);
+        }
+
+        return employeeDTOs;
+
+    }
+    public async Task<EmployeeDto?> MapRoleToEmployeeDto(EmployeeDto employeeDto) 
+    {
+        var employee = _mapper.MapEmployeeDto(employeeDto);
+
+        employeeDto.Roles = await _userManager.GetRolesAsync(employee);
+
+        return employeeDto;
     }
 }

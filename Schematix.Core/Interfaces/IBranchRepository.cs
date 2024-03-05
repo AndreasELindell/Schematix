@@ -18,4 +18,5 @@ public interface IBranchRepository
     Task<bool> BranchExist(int branchId);
     Task<Branch?> GetBranchByIdWithoutEmployees(int branchId);
     Task<Branch?> GetBranchByIdWithEmployees(int branchId);
+    Task<IEnumerable<Branch>> GetAllBranchesWithoutEmployees();
 }

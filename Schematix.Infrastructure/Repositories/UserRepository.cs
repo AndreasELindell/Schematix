@@ -53,7 +53,15 @@ public class UserRepository : IUserRepository
         }
         return Enumerable.Empty<Employee>();
     }
+    public async Task<IEnumerable<Employee>> GetManagers() 
+    {
 
+        List<Employee> managers = (List<Employee>)await _userManager.GetUsersInRoleAsync("Manager");
+        managers.AddRange(await _userManager.GetUsersInRoleAsync("Ceo"));
+
+        return managers;
+
+    }
     public async Task<IEnumerable<Employee>> GetEmployeesFromBranch(int branchId)
     {
         var branch = await _dataContext.Branches.Include(b => b.Employees).FirstOrDefaultAsync(b => b.Id == branchId);

@@ -12,4 +12,5 @@ public interface IUserRepository
     Task DeleteEmployeeById(Employee employee);
     Task<bool> EmployeeExists(string employeeId);
     Task<IEnumerable<IdentityRole>> GetRoles();
+    Task<IEnumerable<Employee>> GetManagers();
 }

@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using NuGet.Protocol.Plugins;
 using Schematix.Core.DTOs;
 using Schematix.Core.Entities;
 using Schematix.Core.Interfaces;
@@ -55,7 +56,7 @@ public class ShiftController : ControllerBase
     { 
         if(!await _branchRepository.BranchExist(branchId))
         {
-            return NotFound();
+            return NotFound(    );
         }
 
         var shifts = await _shiftRepository.GetShiftsForBranch(branchId);

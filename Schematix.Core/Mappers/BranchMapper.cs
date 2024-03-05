@@ -1,10 +1,5 @@
 ﻿using Schematix.Core.DTOs;
 using Schematix.Core.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Schematix.Core.Mappers;
 public interface IBranchMapper
@@ -15,7 +10,7 @@ public interface IBranchMapper
     Branch MapBranchDto(BranchDto dto);
     BranchDto MapBranch(Branch branch);
 
-    
+
 }
 public class BranchMapper : IBranchMapper
 {
@@ -31,12 +26,12 @@ public class BranchMapper : IBranchMapper
 
         var manager = new EmployeeDto();
 
-        if (branch.Employees != null) 
+        if (branch.Employees != null)
         {
             employees = _mapper.MapEmployees(branch.Employees);
         }
-         
-        if(branch.Manager != null) 
+
+        if (branch.Manager != null)
         {
             manager = _mapper.MapEmployee(branch.Manager);
         }

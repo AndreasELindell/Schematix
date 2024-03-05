@@ -8,7 +8,6 @@ using Schematix.Core.Services;
 using Schematix.Infrastructure.Context;
 using Schematix.Infrastructure.Repositories;
 using System.Text.Json.Serialization;
-using static Schematix.Core.Mappers.IEmployeeMapper;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -39,6 +38,12 @@ builder.Services.AddScoped<IWorkTaskMapper, WorkTaskMapper>();
 builder.Services.AddScoped<EmployeeRoleService>();
 
 builder.Services.AddDbContext<DataContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("Default")));
+
+builder.Services.Configure<IdentityOptions>(options =>
+{
+    options.SignIn.RequireConfirmedAccount = false;
+
+});
 
 builder.Services.AddAuthorization();
 

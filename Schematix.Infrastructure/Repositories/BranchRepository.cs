@@ -51,7 +51,10 @@ public class BranchRepository : IBranchRepository
             .Include(b => b.Employees)
             .ToListAsync();
     }
-
+    public async Task<IEnumerable<Branch>> GetAllBranchesWithoutEmployees()
+    {
+        return await _dataContext.Branches.ToListAsync();
+    }
     public async Task<Branch?> GetBranchByIdWithEmployees(int branchId)
     {
         return await _dataContext.Branches.Include(b => b.Employees).FirstOrDefaultAsync(b => b.Id == branchId);

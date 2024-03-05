@@ -80,7 +80,7 @@ public static class MyIdentityApiEndpointRouteBuilderExtensions
                 Email = email,
                 Salary = registration.Salary
             };
-            await userStore.SetUserNameAsync(user, $"{registration.FirstName}.{registration.LastName}", CancellationToken.None);
+            await userStore.SetUserNameAsync(user, user.Email, CancellationToken.None);
             await emailStore.SetEmailAsync(user, email, CancellationToken.None);
             var result = await userManager.CreateAsync(user, registration.Password);
 
@@ -103,7 +103,7 @@ public static class MyIdentityApiEndpointRouteBuilderExtensions
             var isPersistent = (useCookies == true) && (useSessionCookies != true);
             signInManager.AuthenticationScheme = useCookieScheme ? IdentityConstants.ApplicationScheme : IdentityConstants.BearerScheme;
 
-            var result = await signInManager.PasswordSignInAsync(login.Email, login.Password, isPersistent, lockoutOnFailure: true);
+            var result = await signInManager.PasswordSignInAsync(login.Email, login.Password, isPersistent, lockoutOnFailure: false);
 
             if (result.RequiresTwoFactor)
             {

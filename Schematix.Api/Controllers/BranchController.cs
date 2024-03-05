@@ -4,6 +4,7 @@ using Schematix.Core.DTOs;
 using Schematix.Core.Entities;
 using Schematix.Core.Interfaces;
 using Schematix.Core.Mappers;
+using Schematix.Core.Services;
 
 namespace Schematix.Api.Controllers;
 
@@ -14,12 +15,18 @@ public class BranchController : ControllerBase
     private readonly IBranchRepository _branchRepository;
     private readonly IBranchMapper _mapper;
     private readonly IUserRepository _userRepository;
+    private readonly EmployeeRoleService _roleService;
 
-    public BranchController(IBranchRepository branchRepository, IBranchMapper mapper, IUserRepository userRepository)
+    public BranchController(
+        IBranchRepository branchRepository,
+        IBranchMapper mapper,
+        IUserRepository userRepository,
+        EmployeeRoleService roleService)
     {
         _branchRepository = branchRepository;
         _mapper = mapper;
         _userRepository = userRepository;
+        _roleService = roleService;
     }
 
     [HttpGet]
@@ -27,7 +34,29 @@ public class BranchController : ControllerBase
     {
         var branches = await _branchRepository.GetAllBranches();
 
-        return Ok(_mapper.MapBranches(branches));
+        var branchDtos = new List<BranchDto>();
+
+        foreach (var branch in branches)
+        {
+            var branchDto = _mapper.MapBranch(branch);
+
+            branchDto.Manager = await _roleService.MapRoleToEmployeeDto(branchDto.Manager);
+
+            branchDto.Employees = await _roleService.MapRolesToBranchEmployees(branchDto.Employees);
+
+            branchDtos.Add(branchDto);
+        }
+
+        return Ok(branchDtos);
+    }
+    [HttpGet("noEmp")]
+    public async Task<ActionResult<List<BranchDto>>> GetAllBranchesWithoutEmployees()
+    {
+        var branches = await _branchRepository.GetAllBranchesWithoutEmployees();
+    
+        var branchDtos = _mapper.MapBranches(branches);
+
+        return Ok(branchDtos);
     }
     [HttpGet]
     [Route("{branchId}", Name = "GetBranchById")]
@@ -104,6 +133,10 @@ public class BranchController : ControllerBase
         var branch = await _branchRepository.GetBranchByIdWithoutEmployees(branchId);
 
         document.ApplyTo(branch);
+
+        var manager = await _userRepository.GetEmployeeById(branch.ManagerId);
+
+        branch.Manager = manager;
 
         await _branchRepository.UpdateBranch(branch);
 
