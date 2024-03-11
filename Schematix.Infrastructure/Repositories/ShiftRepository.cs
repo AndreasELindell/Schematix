@@ -18,7 +18,12 @@ public class ShiftRepository : IShiftRepository
 
     public async Task AddShift(Shift shift)
     {
-        _dataContext.Shifts.Add(shift);
+        var employee = await _dataContext.Users.FirstOrDefaultAsync(u => u.Id == shift.EmployeeId);
+        if (employee.Shifts == null) 
+        { 
+            employee.Shifts = new List<Shift>();
+        }
+        employee!.Shifts.Add(shift);
         await _dataContext.SaveChangesAsync();
     }
 
@@ -38,13 +43,23 @@ public class ShiftRepository : IShiftRepository
         return (await _dataContext.Shifts.FindAsync(shift))!;
     }
 
-    public async Task<IEnumerable<Shift>> GetShiftsForBranch(int branchId)
+    public async Task<IEnumerable<Shift>> GetShiftsForBranch(int branchId, int week)
     {
+        DateTime jan1 = new DateTime(DateTime.Now.Year, 1, 1);
+        int daysOffset = DayOfWeek.Monday - jan1.DayOfWeek;
+        DateTime firstMonday = jan1.AddDays(daysOffset);
+
+        DateTime targetDate = firstMonday.AddDays((week - 1) * 7);
+
+        // Calculate the start and end date of the week
+        DateOnly startDate = DateOnly.FromDateTime(targetDate);
+        DateOnly endDate = startDate.AddDays(6);
+
         return await _dataContext.Shifts
             .Include(s => s.Branch)
             .Include(s => s.Employee)
             .Include(s => s.Tasks)
-            .Where(s => s.BranchId == branchId).ToListAsync();
+            .Where(s => s.BranchId == branchId && s.Date >= startDate && s.Date <= endDate).ToListAsync();
     }
 
     public async Task<IEnumerable<Shift>> GetShiftsForEmployee(string employeeId, int week)

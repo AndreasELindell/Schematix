@@ -1,4 +1,5 @@
 ﻿using Schematix.Core.Entities;
+using Schematix.Core.Enums;
 
 namespace Schematix.Core.DTOs
 {
@@ -11,6 +12,7 @@ namespace Schematix.Core.DTOs
         public DateOnly Date { get; set; }
         public BranchDto Branch { get; set; }
         public EmployeeDto Employee { get; set; }
+        public ShiftType Type { get; set; }
         public IEnumerable<WorkTaskDto> Tasks { get; set; }
     }
 }

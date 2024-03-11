@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.VisualBasic;
 using NuGet.Protocol.Plugins;
 using Schematix.Core.DTOs;
 using Schematix.Core.Entities;
@@ -52,18 +53,30 @@ public class ShiftController : ControllerBase
     }
 
     [HttpGet("branch/{branchId}")]
-    public async Task<ActionResult<List<ShiftDto>>> GetShiftsFromBranch(int branchId) 
+    public async Task<ActionResult<List<ShiftDto>>> GetShiftsFromBranch(int branchId, int week) 
     { 
+
         if(!await _branchRepository.BranchExist(branchId))
         {
-            return NotFound(    );
+            return NotFound();
         }
 
-        var shifts = await _shiftRepository.GetShiftsForBranch(branchId);
+        List<EmployeeWithShiftsDto> employeesWithShifts = new List<EmployeeWithShiftsDto>();
 
-        var shiftsToReturn = _mapper.MapShifts(shifts);
+        var branchEmployees = await _userRepository.GetEmployeesFromBranch(branchId);
 
-        return Ok(shiftsToReturn);
+        foreach (var employee in branchEmployees) 
+        {
+            var employeeWithShifts = new EmployeeWithShiftsDto()
+            {
+                Employee = _employeeMapper.MapEmployee(employee),
+                Shifts = _mapper.MapShifts(await _shiftRepository.GetShiftsForEmployee(employee.Id, week))
+            };
+            employeesWithShifts.Add(employeeWithShifts);
+        }
+
+
+        return Ok(employeesWithShifts);
     }
 
     [HttpGet("user/{employeeId}")]
@@ -93,10 +106,27 @@ public class ShiftController : ControllerBase
         }
 
         var shift = _mapper.MapShiftDto(shiftDto);
+
         await _shiftRepository.AddShift(shift);
 
         return Created();
 
     }
+    [HttpPut]
+    public async Task<ActionResult> UpdateShift(ShiftDto shiftDto) 
+    {
+        if (!await _userRepository.EmployeeExists(shiftDto.Employee.Id))
+        {
+            return NotFound();
+        }
+        if (!await _branchRepository.BranchExist(shiftDto.Branch.Id))
+        {
+            return NotFound();
+        }
+        var shift = _mapper.MapShiftDto(shiftDto);
 
+        await _shiftRepository.UpdateShift(shift);
+
+        return Ok(shiftDto);
+    }
 }

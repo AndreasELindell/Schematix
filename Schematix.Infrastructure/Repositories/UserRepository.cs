@@ -30,7 +30,7 @@ public class UserRepository : IUserRepository
 
     public async Task<Employee?> GetEmployeeById(string employeeId)
     {
-        var user = await _userManager.FindByIdAsync(employeeId);
+        var user = await _dataContext.Users.AsNoTracking().SingleOrDefaultAsync(u => u.Id == employeeId);
 
         if (user == null)
         {
@@ -64,7 +64,10 @@ public class UserRepository : IUserRepository
     }
     public async Task<IEnumerable<Employee>> GetEmployeesFromBranch(int branchId)
     {
-        var branch = await _dataContext.Branches.Include(b => b.Employees).FirstOrDefaultAsync(b => b.Id == branchId);
+        var branch = await _dataContext.Branches
+            .Include(b => b.Employees)
+            .Include(b => b.Manager)
+            .FirstOrDefaultAsync(b => b.Id == branchId);
 
         if (branch is null || branch.Employees is null)
         {

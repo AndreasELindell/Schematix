@@ -35,6 +35,7 @@ public class ShiftMapper : IShiftMapper
             End = shift.End,
             Length = shift.Length,
             Date = shift.Date,
+            Type = shift.Type,
             Branch = _branchMapper.MapBranch(shift.Branch),
             Employee = _employeeMapper.MapEmployee(shift.Employee),
             Tasks = _workTaskMapper.MapWorkTasks(shift.Tasks),
@@ -53,7 +54,8 @@ public class ShiftMapper : IShiftMapper
 
     public Shift MapShiftDto(ShiftDto shiftDto)
     {
-
+        var BranchId = shiftDto.Branch.Id;
+        var EmployeeId = shiftDto.Employee.Id;
 
         return new Shift
         {
@@ -62,8 +64,9 @@ public class ShiftMapper : IShiftMapper
             End = shiftDto.End,
             Length = shiftDto.Length,
             Date = shiftDto.Date,
-            Branch = _branchMapper.MapBranchDto(shiftDto.Branch),
-            Employee = _employeeMapper.MapEmployeeDto(shiftDto.Employee),
+            BranchId = BranchId,
+            Type = shiftDto.Type,
+            EmployeeId = EmployeeId,
             Tasks = _workTaskMapper.MapWorkTasksDto(shiftDto.Tasks) as ICollection<WorkTask>,
         };
     }
