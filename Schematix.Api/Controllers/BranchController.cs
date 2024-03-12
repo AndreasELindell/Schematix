@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.JsonPatch;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Schematix.Core.DTOs;
 using Schematix.Core.Entities;
@@ -7,7 +8,7 @@ using Schematix.Core.Mappers;
 using Schematix.Core.Services;
 
 namespace Schematix.Api.Controllers;
-
+[Authorize]
 [Route("api/[controller]")]
 [ApiController]
 public class BranchController : ControllerBase

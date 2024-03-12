@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.VisualBasic;
 using NuGet.Protocol.Plugins;
 using Schematix.Core.DTOs;
@@ -8,7 +9,7 @@ using Schematix.Core.Mappers;
 using Schematix.Infrastructure.Repositories;
 
 namespace Schematix.Api.Controllers;
-
+[Authorize]
 [Route("api/[controller]")]
 [ApiController]
 public class ShiftController : ControllerBase
@@ -96,6 +97,8 @@ public class ShiftController : ControllerBase
     [HttpPost]
     public async Task<ActionResult> AddShift(ShiftDto shiftDto) 
     {
+        shiftDto.Id = 0;
+
         if (!await _userRepository.EmployeeExists(shiftDto.Employee.Id))
         {
             return NotFound();
@@ -128,5 +131,17 @@ public class ShiftController : ControllerBase
         await _shiftRepository.UpdateShift(shift);
 
         return Ok(shiftDto);
+    }
+    [HttpDelete("{shiftId}")]
+    public async Task<ActionResult> DeleteShift(int shiftId) 
+    { 
+        if(!await _shiftRepository.DoShiftExist(shiftId)) 
+        { 
+            return NotFound();
+        }
+
+        await _shiftRepository.DeleteShift(shiftId);
+
+        return Ok();
     }
 }

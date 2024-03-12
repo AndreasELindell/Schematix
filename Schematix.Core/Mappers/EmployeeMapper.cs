@@ -23,7 +23,7 @@ public class EmployeeMapper : IEmployeeMapper
         return new EmployeeDto
         {
             Id = employee.Id,
-            UserName = employee.UserName!,
+            UserName = employee.UserName.Replace(".", " ").Substring(0, employee.UserName.IndexOf('@'))!,
             Salary = employee.Salary,
             Email = employee.Email!,
             PhoneNumber = employee.PhoneNumber!

@@ -1,5 +1,6 @@
 ﻿using Schematix.Core.DTOs;
 using Schematix.Core.Entities;
+using Schematix.Core.Enums;
 
 namespace Schematix.Core.Mappers;
 
@@ -35,7 +36,7 @@ public class ShiftMapper : IShiftMapper
             End = shift.End,
             Length = shift.Length,
             Date = shift.Date,
-            Type = shift.Type,
+            Type = shift.Type.ToString(),
             Branch = _branchMapper.MapBranch(shift.Branch),
             Employee = _employeeMapper.MapEmployee(shift.Employee),
             Tasks = _workTaskMapper.MapWorkTasks(shift.Tasks),
@@ -57,6 +58,15 @@ public class ShiftMapper : IShiftMapper
         var BranchId = shiftDto.Branch.Id;
         var EmployeeId = shiftDto.Employee.Id;
 
+        ShiftType type;
+
+        var newtype = Enum.TryParse(shiftDto.Type, out type);
+
+        if (Enum.TryParse(shiftDto.Type, true, out type))
+        {
+            int intValue = (int)type;
+        }
+
         return new Shift
         {
             Id = shiftDto.Id,
@@ -65,9 +75,9 @@ public class ShiftMapper : IShiftMapper
             Length = shiftDto.Length,
             Date = shiftDto.Date,
             BranchId = BranchId,
-            Type = shiftDto.Type,
+            Type = type,
             EmployeeId = EmployeeId,
-            Tasks = _workTaskMapper.MapWorkTasksDto(shiftDto.Tasks) as ICollection<WorkTask>,
+            Tasks = _workTaskMapper.MapWorkTasksDto(shiftDto.Tasks).ToList(),
         };
     }
 }

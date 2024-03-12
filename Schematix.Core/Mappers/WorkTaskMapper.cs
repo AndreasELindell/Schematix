@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 namespace Schematix.Core.Mappers;
 
 public interface IWorkTaskMapper 
-{ 
+{
     IEnumerable<WorkTask> MapWorkTasksDto(IEnumerable<WorkTaskDto> workTaskDto);
     IEnumerable<WorkTaskDto> MapWorkTasks(IEnumerable<WorkTask> workTask);
     WorkTaskDto MapWorkTask(WorkTask workTask);
@@ -32,7 +32,7 @@ public class WorkTaskMapper : IWorkTaskMapper
 
         return new WorkTask
         {
-            Id = workTaskDto.Id,
+            
             Start = workTaskDto.Start,
             End = workTaskDto.End,
             Type = type
@@ -44,7 +44,7 @@ public class WorkTaskMapper : IWorkTaskMapper
         
         return new WorkTaskDto
         {
-            Id = workTask.Id,
+            
             Start = workTask.Start,
             End = workTask.End,
             Type = workTask.Type.ToString(),

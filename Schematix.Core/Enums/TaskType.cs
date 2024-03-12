@@ -9,6 +9,7 @@ namespace Schematix.Core.Enums
     public enum TaskType
     {
         Work,
-        Break
+        Break,
+        Meeting
     }
 }
