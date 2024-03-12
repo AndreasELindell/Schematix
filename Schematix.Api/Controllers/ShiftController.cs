@@ -96,6 +96,8 @@ public class ShiftController : ControllerBase
     [HttpPost]
     public async Task<ActionResult> AddShift(ShiftDto shiftDto) 
     {
+        shiftDto.Id = 0;
+
         if (!await _userRepository.EmployeeExists(shiftDto.Employee.Id))
         {
             return NotFound();
@@ -128,5 +130,17 @@ public class ShiftController : ControllerBase
         await _shiftRepository.UpdateShift(shift);
 
         return Ok(shiftDto);
+    }
+    [HttpDelete("{shiftId}")]
+    public async Task<ActionResult> DeleteShift(int shiftId) 
+    { 
+        if(!await _shiftRepository.DoShiftExist(shiftId)) 
+        { 
+            return NotFound();
+        }
+
+        await _shiftRepository.DeleteShift(shiftId);
+
+        return Ok();
     }
 }

@@ -27,9 +27,11 @@ public class ShiftRepository : IShiftRepository
         await _dataContext.SaveChangesAsync();
     }
 
-    public async Task DeleteShift(Shift shift)
+    public async Task DeleteShift(int shiftId)
     {
-        _dataContext.Shifts.Remove(shift);
+
+        var shift = await _dataContext.Shifts.Include(s => s.Tasks).FirstOrDefaultAsync(u => u.Id == shiftId);
+        _dataContext.Shifts.Remove(shift!);
         await _dataContext.SaveChangesAsync();
     }
 
@@ -84,7 +86,9 @@ public class ShiftRepository : IShiftRepository
 
     public async Task UpdateShift(Shift shift)
     {
-        _dataContext.Shifts.Update(shift);
+        var shiftToUpdate = await _dataContext.Shifts.Include(t => t.Tasks).FirstOrDefaultAsync(s => s.Id == shift.Id);
+        _dataContext.Shifts.Remove(shiftToUpdate);
+        _dataContext.Shifts.Add(shift);
         await _dataContext.SaveChangesAsync();
     }
 }

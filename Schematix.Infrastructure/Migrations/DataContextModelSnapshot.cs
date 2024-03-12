@@ -165,15 +165,13 @@ namespace Schematix.Infrastructure.Migrations
 
                     b.Property<string>("ManagerId")
                         .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("ManagerId");
 
                     b.ToTable("Branches", (string)null);
                 });
@@ -377,17 +375,6 @@ namespace Schematix.Infrastructure.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("Schematix.Core.Entities.Branch", b =>
-                {
-                    b.HasOne("Schematix.Core.Entities.Employee", "Manager")
-                        .WithMany()
-                        .HasForeignKey("ManagerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Manager");
                 });
 
             modelBuilder.Entity("Schematix.Core.Entities.Employee", b =>

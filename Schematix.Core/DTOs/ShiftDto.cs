@@ -12,7 +12,7 @@ namespace Schematix.Core.DTOs
         public DateOnly Date { get; set; }
         public BranchDto Branch { get; set; }
         public EmployeeDto Employee { get; set; }
-        public ShiftType Type { get; set; }
+        public string Type { get; set; }
         public IEnumerable<WorkTaskDto> Tasks { get; set; }
     }
 }
